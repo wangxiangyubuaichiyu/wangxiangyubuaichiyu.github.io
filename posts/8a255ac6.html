@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-minimal.min.css">
+  <script src="/lib/pace/pace.min.js"></script>
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="人脸识别常用接口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="人脸识别基础">
+<meta property="og:url" content="http://example.com/posts/8a255ac6.html">
+<meta property="og:site_name" content="blogWxy">
+<meta property="og:description" content="人脸识别常用接口">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-01T08:33:46.000Z">
+<meta property="article:modified_time" content="2025-04-01T08:37:01.768Z">
+<meta property="article:author" content="Wxy">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="计算机视觉">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/posts/8a255ac6.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>人脸识别基础 | blogWxy</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">blogWxy</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录学习的点点滴滴</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/8a255ac6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E5%A4%B4%E5%83%8F.jpg">
+      <meta itemprop="name" content="Wxy">
+      <meta itemprop="description" content="故事开始于2025/2/24 15：47">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="blogWxy">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          人脸识别基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-04-01 16:33:46 / 修改时间：16:37:01" itemprop="dateCreated datePublished" datetime="2025-04-01T16:33:46+08:00">2025-04-01</time>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+            <div class="post-description">人脸识别常用接口</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="人脸识别demo"><a href="#人脸识别demo" class="headerlink" title="人脸识别demo"></a>人脸识别demo</h1><h2 id="函数介绍"><a href="#函数介绍" class="headerlink" title="函数介绍"></a>函数介绍</h2><p>以下介绍的都是opencv提供给python的函数。</p>
+<h3 id="1-加载图片"><a href="#1-加载图片" class="headerlink" title="1. 加载图片"></a>1. 加载图片</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.imread(filename,flags)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>filename：图片的路径</li>
+<li>flags：加载图片的方式<ul>
+<li>cv2.IMREAD_COLOR：默认参数，加载彩色图片，这个是彩色图片加载最常用的参数</li>
+<li>cv2.IMREAD_GRAYSCALE：以灰度模式加载图片</li>
+</ul>
+</li>
+<li>返回值：返回img对象</li>
+</ul>
+<h3 id="2-显示图片"><a href="#2-显示图片" class="headerlink" title="2. 显示图片"></a>2. 显示图片</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.imshow(winname,mat)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>winname：显示图片的窗口名称</li>
+<li>mat：要显示的图片</li>
+</ul>
+<h3 id="3-保存图片"><a href="#3-保存图片" class="headerlink" title="3. 保存图片"></a>3. 保存图片</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.imwrite(filename,img[,params])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>filename：保存的文件名</li>
+<li>img：要保存的图片</li>
+<li>params：特定格式保存的参数编码，一般不用管。</li>
+</ul>
+<h3 id="4-等待键盘输入"><a href="#4-等待键盘输入" class="headerlink" title="4. 等待键盘输入"></a>4. 等待键盘输入</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.waitKey(delay)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>delay：延迟多少毫秒，当delay&lt;&#x3D;0时，会永远等待下去</li>
+<li>返回值：返回值是当前键盘按键的值</li>
+</ul>
+<h3 id="5-销毁所有窗口"><a href="#5-销毁所有窗口" class="headerlink" title="5. 销毁所有窗口"></a>5. 销毁所有窗口</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-图片剪裁"><a href="#6-图片剪裁" class="headerlink" title="6. 图片剪裁"></a>6. 图片剪裁</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.resize(src,dsize[,dst[,fx[,fy[,interpolation]]]])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>src：输入，原图像，即待改变大小的图像</li>
+<li>dsize：输出，目标图像大小。<ul>
+<li>如果这个参数不为0，那么就代表将原图像缩放到这个Size(width，height)指定的大小；</li>
+<li>如果这个参数为0，那么原图像缩放之后的大小就要通过下面的公式来计算：dsize&#x3D;Size(round(fxsrc.cols),round(fysrc.rows))  </li>
+<li>其中，fx和fy就是下面要说的两个参数，是图像width方向和height方向的缩放比例。<ul>
+<li>fx：width方向的缩放比例</li>
+<li>fy：height方向的缩放比例</li>
+</ul>
+</li>
+<li>interpolation：这个参数是指定插值的方式，图像缩放之后，肯定像素要进行重新计算的，就靠这个参数来指定重新计算像素的方式，有以下几种：<ul>
+<li>INTER_NEAREST - 最近邻插值</li>
+<li>INTER_LINEAR - 双线性插值（默认设置）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回值：返回改变大小之后的图像</li>
+</ul>
+<h3 id="7-图片灰度化"><a href="#7-图片灰度化" class="headerlink" title="7. 图片灰度化"></a>7. 图片灰度化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.cvtColor(src,code[,dst[,dstCn]])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>src：输入图像</li>
+<li>code：颜色空间转换代码或标志<ul>
+<li>cv2.COLOR_BGR2GRAY：BGR转灰度图</li>
+<li>cv2.COLOR_BGR2HSV：BGR转HSV</li>
+</ul>
+</li>
+<li>dst：输出图像</li>
+<li>dstCn：目标图像中的通道数</li>
+<li>返回值：返回转换后的图像</li>
+</ul>
+<h3 id="8-加载训练数据"><a href="#8-加载训练数据" class="headerlink" title="8. 加载训练数据"></a>8. 加载训练数据</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.CascadeClassifier(filename)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>filename：训练数据的路径</li>
+<li>返回值：返回训练数据对象</li>
+</ul>
+<h3 id="9-加载过滤器"><a href="#9-加载过滤器" class="headerlink" title="9. 加载过滤器"></a>9. 加载过滤器</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">detect.detectMultiScale(src)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>src：灰度图</li>
+<li>返回值：返回人脸的位置</li>
+</ul>
+<h3 id="10-绘制矩形"><a href="#10-绘制矩形" class="headerlink" title="10. 绘制矩形"></a>10. 绘制矩形</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.rectangle(img,pt1,pt2,color[,thickness[,lineType[,shift]]])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>img：要绘制的图片</li>
+<li>pt1：矩形的顶点</li>
+<li>pt2：矩形的顶点</li>
+<li>color：矩形的颜色</li>
+<li>thickness：矩形边框线的粗细（如果为负值如CV_FILLED），负数值如CV_FILLED表示填充矩形</li>
+<li>lineType：线条的类型。见line</li>
+<li>shift：坐标点的小数点位数</li>
+</ul>
+<h3 id="11-加载视频"><a href="#11-加载视频" class="headerlink" title="11. 加载视频"></a>11. 加载视频</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.VideoCapture(filename)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>filename：视频的路径<ul>
+<li>如果是数字，代表打开摄像头</li>
+</ul>
+</li>
+<li>返回值：返回视频对象</li>
+</ul>
+<h3 id="12-判断视频是否打开"><a href="#12-判断视频是否打开" class="headerlink" title="12. 判断视频是否打开"></a>12. 判断视频是否打开</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cap.isOpened()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>返回值：返回True或者False</li>
+</ul>
+<h3 id="13-读取视频"><a href="#13-读取视频" class="headerlink" title="13. 读取视频"></a>13. 读取视频</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cap.read()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>返回值：返回读取到的视频帧和是否读取成功的标志</li>
+</ul>
+<h3 id="14-释放视频资源"><a href="#14-释放视频资源" class="headerlink" title="14. 释放视频资源"></a>14. 释放视频资源</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cap.release()</span><br></pre></td></tr></table></figure>
+
+<h3 id="15-创建局部二值模式直方图"><a href="#15-创建局部二值模式直方图" class="headerlink" title="15. 创建局部二值模式直方图"></a>15. 创建局部二值模式直方图</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.face.LBPHFaceRecognizer_create()</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>返回值：返回LBPHFaceRecognizer对象</li>
+</ul>
+<h3 id="16-识别人脸"><a href="#16-识别人脸" class="headerlink" title="16. 识别人脸"></a>16. 识别人脸</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">recognizer.predict(gray[y:y+h,x:x+w])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>gray[y:y+h,x:x+w]：人脸图像</li>
+<li>返回值：返回预测的id和置信度</li>
+</ul>
+<h3 id="17-图像上添加文本"><a href="#17-图像上添加文本" class="headerlink" title="17. 图像上添加文本"></a>17. 图像上添加文本</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.putText(img,text,org,fontFace,fontScale,color[,thickness[,lineType[,bottomLeftOrigin]]])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>img：待绘制的图像</li>
+<li>text：文本字符串</li>
+<li>org：文本框的左下角</li>
+<li>fontFace：字体</li>
+<li>fontScale：字体大小</li>
+<li>color：字体颜色</li>
+<li>thickness：线条的粗细</li>
+<li>lineType：线型</li>
+<li>bottomLeftOrigin：当此参数为true时，图像的数据原点位于左下角。否则，它位于左上角。</li>
+<li>返回值：返回绘制了文字的图像</li>
+</ul>
+<h3 id="18-绘制圆形"><a href="#18-绘制圆形" class="headerlink" title="18. 绘制圆形"></a>18. 绘制圆形</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv2.circle(img,center,radius,color[,thickness[,lineType[,shift]]])</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>img：待绘制的图像</li>
+<li>center：圆心坐标</li>
+<li>radius：圆的半径</li>
+<li>color：圆的颜色</li>
+<li>thickness：线条的粗细</li>
+<li>lineType：线型</li>
+<li>shift：坐标点的小数点位数</li>
+<li>返回值：返回绘制了圆形的图像</li>
+</ul>
+<blockquote>
+<p>其他图像参数类似</p>
+</blockquote>
+<h2 id="流程介绍"><a href="#流程介绍" class="headerlink" title="流程介绍"></a>流程介绍</h2><h3 id="1-训练数据"><a href="#1-训练数据" class="headerlink" title="1. 训练数据"></a>1. 训练数据</h3><p>流程：</p>
+<ol>
+<li>准备人脸照片的路径</li>
+<li>获取人脸特征和对应id<ol>
+<li>获取图片路径列表</li>
+<li>加载人脸检测器</li>
+<li>遍历图片列表<ol>
+<li>打开图片并转换为灰度图像</li>
+<li>检测人脸</li>
+<li>提取id</li>
+<li>保存人脸特征和id</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>创建人脸识别器并训练</li>
+<li>保存训练结果</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getImageAndLabels</span>(<span class="params">path</span>):</span><br><span class="line">    facesSamples=[]</span><br><span class="line">    ids=[]</span><br><span class="line">    imagePaths=[os.path.join(path,f) <span class="keyword">for</span> f <span class="keyword">in</span> os.listdir(path)]</span><br><span class="line">    <span class="comment"># 检测人脸</span></span><br><span class="line">    face_detector = cv2.CascadeClassifier(<span class="string">&#x27;D:/programming/libs/opencv/opencv/sources/data/haarcascades/haarcascade_frontalface_alt2.xml&#x27;</span>)</span><br><span class="line">    <span class="comment"># 打印数组imagePaths</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;数据排列：&#x27;</span>,imagePaths)</span><br><span class="line">    <span class="comment"># 遍历列表中的图片</span></span><br><span class="line">    <span class="keyword">for</span> imagePath <span class="keyword">in</span> imagePaths:</span><br><span class="line">        <span class="comment"># 打开图片,黑白化</span></span><br><span class="line">        PIL_img=Image.<span class="built_in">open</span>(imagePath).convert(<span class="string">&#x27;L&#x27;</span>)</span><br><span class="line">        img_numpy=np.array(PIL_img,<span class="string">&#x27;uint8&#x27;</span>)</span><br><span class="line">        <span class="comment"># 获取图片人脸特征</span></span><br><span class="line">        faces = face_detector.detectMultiScale(img_numpy)</span><br><span class="line">        <span class="comment"># 获取每张图片的id和姓名</span></span><br><span class="line">        <span class="built_in">id</span> = <span class="built_in">int</span>(os.path.split(imagePath)[<span class="number">1</span>].split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>])</span><br><span class="line">        <span class="comment"># 预防无面容照片</span></span><br><span class="line">        <span class="keyword">for</span> x,y,w,h <span class="keyword">in</span> faces:</span><br><span class="line">            ids.append(<span class="built_in">id</span>)</span><br><span class="line">            facesSamples.append(img_numpy[y:y+h,x:x+w])</span><br><span class="line">        <span class="comment"># 打印id</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;id:&#x27;</span>, <span class="built_in">id</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;fs:&#x27;</span>, facesSamples)</span><br><span class="line">    <span class="keyword">return</span> facesSamples,ids</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 图片路径</span></span><br><span class="line">    path=<span class="string">&#x27;./save_img&#x27;</span></span><br><span class="line">    <span class="comment"># 获取图像数组和id标签数组和姓名</span></span><br><span class="line">    faces,ids=getImageAndLabels(path)</span><br><span class="line">    <span class="comment"># 获取训练对象</span></span><br><span class="line">    recognizer=cv2.face.LBPHFaceRecognizer_create()</span><br><span class="line">    recognizer.train(faces,np.array(ids))</span><br><span class="line">    <span class="comment"># 保存文件</span></span><br><span class="line">    <span class="comment"># 确保目录存在</span></span><br><span class="line">    trainer_dir = <span class="string">&#x27;./trainer&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(trainer_dir):</span><br><span class="line">        os.makedirs(trainer_dir)</span><br><span class="line">    recognizer.write(<span class="string">&#x27;./trainer/trainer.yml&#x27;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-人脸识别"><a href="#2-人脸识别" class="headerlink" title="2. 人脸识别"></a>2. 人脸识别</h3><p>流程：</p>
+<ol>
+<li>加载训练数据</li>
+<li>加载识别器</li>
+<li>打开摄像头</li>
+<li>识别人脸<ol>
+<li>灰度化</li>
+<li>检测人脸</li>
+<li>识别人脸</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment">#加载训练数据集文件</span></span><br><span class="line">recogizer=cv2.face.LBPHFaceRecognizer_create()</span><br><span class="line">recogizer.read(<span class="string">&#x27;trainer/trainer.yml&#x27;</span>)</span><br><span class="line">names=[]</span><br><span class="line">warningtime = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#准备识别的图片</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">face_detect_demo</span>(<span class="params">img</span>):</span><br><span class="line">    gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)<span class="comment">#转换为灰度</span></span><br><span class="line">    face_detector=cv2.CascadeClassifier(<span class="string">&#x27;D:/programming/libs/opencv/opencv/sources/data/haarcascades/haarcascade_frontalface_alt2.xml&#x27;</span>)</span><br><span class="line">    face=face_detector.detectMultiScale(gray,<span class="number">1.1</span>,<span class="number">5</span>,cv2.CASCADE_SCALE_IMAGE,(<span class="number">100</span>,<span class="number">100</span>),(<span class="number">300</span>,<span class="number">300</span>))</span><br><span class="line">    <span class="keyword">for</span> x,y,w,h <span class="keyword">in</span> face:</span><br><span class="line">        cv2.rectangle(img,(x,y),(x+w,y+h),color=(<span class="number">0</span>,<span class="number">255</span>,<span class="number">0</span>),thickness=<span class="number">2</span>)</span><br><span class="line">        <span class="comment"># 人脸识别</span></span><br><span class="line">        ids, confidence = recogizer.predict(gray[y:y + h, x:x + w])</span><br><span class="line">        <span class="comment">#print(&#x27;标签id:&#x27;,ids,&#x27;置信评分：&#x27;, confidence)</span></span><br><span class="line">        <span class="keyword">if</span> confidence &gt; <span class="number">80</span>:</span><br><span class="line">            cv2.putText(img, <span class="string">&#x27;unkonw&#x27;</span>, (x + <span class="number">10</span>, y - <span class="number">10</span>), cv2.FONT_HERSHEY_SIMPLEX, <span class="number">0.75</span>, (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            cv2.putText(img,<span class="built_in">str</span>(names[ids-<span class="number">1</span>]), (x + <span class="number">10</span>, y - <span class="number">10</span>), cv2.FONT_HERSHEY_SIMPLEX, <span class="number">0.75</span>, (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">1</span>)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;result&#x27;</span>,img)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">name</span>():</span><br><span class="line">    path = <span class="string">&#x27;./save_img&#x27;</span></span><br><span class="line">    imagePaths=[os.path.join(path,f) <span class="keyword">for</span> f <span class="keyword">in</span> os.listdir(path)]</span><br><span class="line">    <span class="keyword">for</span> imagePath <span class="keyword">in</span> imagePaths:</span><br><span class="line">       name = <span class="built_in">str</span>(os.path.split(imagePath)[<span class="number">1</span>].split(<span class="string">&#x27;.&#x27;</span>,<span class="number">2</span>)[<span class="number">1</span>])</span><br><span class="line">       names.append(name)</span><br><span class="line"></span><br><span class="line">cap=cv2.VideoCapture(<span class="number">0</span>)</span><br><span class="line">name()</span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    flag,frame=cap.read()</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> flag:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    face_detect_demo(frame)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(<span class="string">&#x27; &#x27;</span>) == cv2.waitKey(<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">cv2.destroyAllWindows()</span><br><span class="line">cap.release()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/python/" rel="tag"># python</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"># 计算机视觉</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/posts/54e1373e.html" rel="prev" title="Mysql">
+      <i class="fa fa-chevron-left"></i> Mysql
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%ABdemo"><span class="nav-number">1.</span> <span class="nav-text">人脸识别demo</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">函数介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8A%A0%E8%BD%BD%E5%9B%BE%E7%89%87"><span class="nav-number">1.1.1.</span> <span class="nav-text">1. 加载图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%98%BE%E7%A4%BA%E5%9B%BE%E7%89%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">2. 显示图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%BF%9D%E5%AD%98%E5%9B%BE%E7%89%87"><span class="nav-number">1.1.3.</span> <span class="nav-text">3. 保存图片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%AD%89%E5%BE%85%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="nav-number">1.1.4.</span> <span class="nav-text">4. 等待键盘输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%94%80%E6%AF%81%E6%89%80%E6%9C%89%E7%AA%97%E5%8F%A3"><span class="nav-number">1.1.5.</span> <span class="nav-text">5. 销毁所有窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%9B%BE%E7%89%87%E5%89%AA%E8%A3%81"><span class="nav-number">1.1.6.</span> <span class="nav-text">6. 图片剪裁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%9B%BE%E7%89%87%E7%81%B0%E5%BA%A6%E5%8C%96"><span class="nav-number">1.1.7.</span> <span class="nav-text">7. 图片灰度化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%8A%A0%E8%BD%BD%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE"><span class="nav-number">1.1.8.</span> <span class="nav-text">8. 加载训练数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E5%8A%A0%E8%BD%BD%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">1.1.9.</span> <span class="nav-text">9. 加载过滤器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-%E7%BB%98%E5%88%B6%E7%9F%A9%E5%BD%A2"><span class="nav-number">1.1.10.</span> <span class="nav-text">10. 绘制矩形</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-%E5%8A%A0%E8%BD%BD%E8%A7%86%E9%A2%91"><span class="nav-number">1.1.11.</span> <span class="nav-text">11. 加载视频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12-%E5%88%A4%E6%96%AD%E8%A7%86%E9%A2%91%E6%98%AF%E5%90%A6%E6%89%93%E5%BC%80"><span class="nav-number">1.1.12.</span> <span class="nav-text">12. 判断视频是否打开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13-%E8%AF%BB%E5%8F%96%E8%A7%86%E9%A2%91"><span class="nav-number">1.1.13.</span> <span class="nav-text">13. 读取视频</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14-%E9%87%8A%E6%94%BE%E8%A7%86%E9%A2%91%E8%B5%84%E6%BA%90"><span class="nav-number">1.1.14.</span> <span class="nav-text">14. 释放视频资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15-%E5%88%9B%E5%BB%BA%E5%B1%80%E9%83%A8%E4%BA%8C%E5%80%BC%E6%A8%A1%E5%BC%8F%E7%9B%B4%E6%96%B9%E5%9B%BE"><span class="nav-number">1.1.15.</span> <span class="nav-text">15. 创建局部二值模式直方图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#16-%E8%AF%86%E5%88%AB%E4%BA%BA%E8%84%B8"><span class="nav-number">1.1.16.</span> <span class="nav-text">16. 识别人脸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#17-%E5%9B%BE%E5%83%8F%E4%B8%8A%E6%B7%BB%E5%8A%A0%E6%96%87%E6%9C%AC"><span class="nav-number">1.1.17.</span> <span class="nav-text">17. 图像上添加文本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#18-%E7%BB%98%E5%88%B6%E5%9C%86%E5%BD%A2"><span class="nav-number">1.1.18.</span> <span class="nav-text">18. 绘制圆形</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.</span> <span class="nav-text">流程介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AE%AD%E7%BB%83%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 训练数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 人脸识别</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Wxy"
+      src="/images/%E5%A4%B4%E5%83%8F.jpg">
+  <p class="site-author-name" itemprop="name">Wxy</p>
+  <div class="site-description" itemprop="description">故事开始于2025/2/24 15：47</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wxy</span>
+</div>
+  <div class="powered-by">
+  </div><script color="0,0,255" opacity="0.5" zIndex="-1" count="99" src="https://cdn.jsdelivr.net/npm/canvas-nest.js@1/dist/canvas-nest.js"></script>
+<script type="text/javascript" src="/js/click_love.js"></script>
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>
